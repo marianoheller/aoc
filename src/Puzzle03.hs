@@ -1,6 +1,6 @@
 module Puzzle03
   ( solver,
-    runProgram,
+    execProgram,
   )
 where
 
@@ -8,6 +8,8 @@ import Control.Monad.Trans.State.Lazy
 import Data.List.Split
 
 data Op = One | Two | NineNine
+
+type ProgramState = (Int, [Int])
 
 filePath :: String
 filePath = "./assets/03"
@@ -18,41 +20,44 @@ intToOp n
   | n == 2 = Two
   | otherwise = NineNine
 
-runOp :: Op -> StateT [Int] IO ()
-runOp One = do
-  return ()
-runOp Two = do
-  return ()
-runOp NineNine = do
-  return ()
-
-
 replace :: Int -> a -> [a] -> [a]
-replace n e xs = take n xs ++ [e] ++ drop (n + 1) xs
+replace n element xs = take n xs ++ [element] ++ drop (n + 1) xs
 
-program :: StateT (Int, [Int]) IO ()
+getRegister :: Int -> [Int] -> (Int, Int, Int)
+getRegister p vals =
+  let pos1 = vals !! (p + 1)
+      pos2 = vals !! (p + 2)
+   in ( vals !! pos1,
+        vals !! pos2,
+        vals !! (p + 3)
+      )
+
+program :: StateT ProgramState IO ProgramState
 program = do
   (p, vals) <- get
   let op = intToOp $ vals !! p
   case op of
     One -> do
-      let pos1 = vals !! (p + 1)
-      let pos2 = vals !! (p + 2)
-      let pos3 = vals !! (p + 3)
-      let val1 = vals !! pos1
-      let val2 = vals !! pos2
-      let suma = val1 + val2
-      let newState = replace pos3 suma vals
-      put (p + 4, newState)
-    Two -> return ()
-    _ -> return ()
+      let (val1, val2, pos3) = getRegister p vals
+      let result = val1 + val2
+      put (p + 4, replace pos3 result vals)
+      program
+    Two -> do
+      let (val1, val2, pos3) = getRegister p vals
+      let result = val1 * val2
+      put (p + 4, replace pos3 result vals)
+      program
+    _ -> do
+      state <- get
+      return state
 
-runProgram :: [Int] -> IO ((), (Int, [Int]))
-runProgram vals = runStateT program (0, vals)
+execProgram :: [Int] -> IO ProgramState
+execProgram vals = execStateT program (0, vals)
 
 solver :: IO ()
 solver = do
   content <- readFile filePath
   let vals = fmap (read :: String -> Int) $ splitOn "," content
-  output <- runProgram vals
-  putStrLn "asd"
+  let fixedVals = (replace 1 12) . (replace 2 2) $ vals
+  output <- execProgram fixedVals
+  putStrLn . show $ output
