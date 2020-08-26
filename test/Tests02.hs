@@ -8,7 +8,7 @@ import Data.Monoid
 
 main :: IO ()
 main = hspec $ do
-  describe "01" $ do
+  describe "02" $ do
     it "example 1: 14 -> 2" $ do
       calcFuel 14 `shouldBe` (2 :: Sum Int)
     it "example 1: 1969 -> 966" $ do

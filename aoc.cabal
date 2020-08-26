@@ -30,6 +30,7 @@ library
       Lib
     , Puzzle01
     , Puzzle02
+    , Puzzle03
   other-modules:
       Paths_aoc
   hs-source-dirs:
@@ -37,6 +38,8 @@ library
   build-depends:
       base >=4.7 && <5
     , extra
+    , transformers
+    , split
     , QuickCheck
     , hspec
   default-language: Haskell2010
