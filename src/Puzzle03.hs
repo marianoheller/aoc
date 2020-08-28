@@ -1,6 +1,7 @@
 module Puzzle03
   ( solver,
     execProgram,
+    fixVals,
     ProgramState,
   )
 where
@@ -61,10 +62,13 @@ program = do
 execProgram :: [Int] -> IO ProgramState
 execProgram vals = execStateT program (0, vals)
 
+fixVals :: Int -> Int -> [Int] -> [Int]
+fixVals f s = (replace 1 f) . (replace 2 s)
+
 solver :: IO ()
 solver = do
   content <- readFile filePath
   let vals = fmap (read :: String -> Int) $ splitOn "," content
-  let fixedVals = (replace 1 12) . (replace 2 2) $ vals
+  let fixedVals = fixVals 12 2 vals
   output <- execProgram fixedVals
   putStrLn . show $ output
