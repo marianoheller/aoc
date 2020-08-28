@@ -27,11 +27,11 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
-    , Puzzle01
+      Puzzle01
     , Puzzle02
     , Puzzle03
     , Puzzle04
+    , Puzzle05
   other-modules:
       Paths_aoc
   hs-source-dirs:
@@ -66,6 +66,9 @@ test-suite aoc-test
   other-modules:
       Paths_aoc
     , Tests01
+    , Tests02
+    , Tests03
+    , Tests05
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
